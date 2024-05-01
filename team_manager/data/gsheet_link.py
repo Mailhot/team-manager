@@ -14,15 +14,34 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets', ]#'https://www.googlea
 # here enter the id of your google sheet
 SAMPLE_SPREADSHEET_ID_input = config.SAMPLE_SPREADSHEET_ID_input
 
+
+sheet_data_dict = {'SPARE': config.SPARE,
+                'PLAYERS': config.PLAYERS,
+                'REPLACEMENT': config.REPLACEMENT, 
+                'ALIGNMENT': config.ALIGNMENT, 
+                'SCHEDULE': config.SCHEDULE,
+                }
 SPARE = config.SPARE
 PLAYERS = config.PLAYERS
 REPLACEMENT = config.REPLACEMENT
 ALIGNMENT = config.ALIGNMENT
 SCHEDULE = config.SCHEDULE
-sheet_data = [SPARE, PLAYERS, REPLACEMENT, ALIGNMENT, SCHEDULE]
 
-def get_data():
+
+def get_data(value=None):
+    """ value: list of terms (in the sheet_data_dict keys), or a single text string"""
     global values_input, service
+
+    if value == None: 
+        sheet_data = [SPARE, PLAYERS, REPLACEMENT, ALIGNMENT, SCHEDULE]
+    
+    elif type(value) == list:
+        sheet_data = []
+        for element in value:
+            sheet_data.append(sheet_data_dict[element])
+    elif type(value) == str:
+        sheet_data = [sheet_data_dict[value]]
+        
     creds = None
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
@@ -59,15 +78,17 @@ def get_data():
                 none_list = [None] * (len(values_input[0]) - len(value_))
                 value_ += none_list
 
-        print(values_input)
+        # print('values:', values_input)
         if not values_input and not values_expansion:
             print('No data found.')
 
         df=pd.DataFrame(values_input[1:], columns=values_input[0])
 
         sheet_data_output[result_input['range'].split('!')[0]] = df
-        # print(sheet_data_output.keys())
+        # print(sheet_data_output)
 
+        if len(sheet_data_output.keys()) == 1:
+            sheet_data_output = sheet_data_output['Players']
 
     return sheet_data_output
 

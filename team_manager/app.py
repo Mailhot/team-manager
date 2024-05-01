@@ -7,6 +7,8 @@ def check_replacement():
 
 	for index, row in df_data['Replacement'].iterrows():
 		if row['Remplacant'] == None:
+			print('NO', row['Remplacant'])
+		else:
 			print('YES', row['Remplacant'])
 	return df_data
 
