@@ -27,13 +27,13 @@ class League():
 		# generate games dates from season.
 		start, end = season.start_date, season.stop_date
 		days = (start + timedelta(days=i) for i in range((end - start).days + 1))
-		l = [d for d in days if d.weekday() in [1] ]
+		l = [d for d in days if d.weekday() in [1]]
 
 		k = 0
 		for date in l:
 			this_routing = routing[k]
-			team1 = Team(line1=this_routing[0][0], line2=this_routing[0][1], goaler=players[19], substitution=None)
-			team2 = Team(line1=this_routing[1][0], line2=this_routing[1][1], goaler=players[18], substitution=None)
+			team1 = Team(line1=self.lines.get(this_routing[0][0]), line2=self.lines.get(this_routing[0][1]), goaler=players[19], substitution=None)
+			team2 = Team(line1=self.lines.get(this_routing[1][0]), line2=self.lines.get(this_routing[1][1]), goaler=players[18], substitution=None)
 
 			game1 = Game(local_team=team1, visitor_team=team2, date=date, location=config.default_location, referee=None, season=season)
 			self.games[k] = game1
@@ -58,7 +58,7 @@ class Season():
 
 class Game():
 	"""a game class"""
-	def __init__(self, local_team, visitor_team, date, location, referee=None, season=None):
+	def __init__(self, local_team, visitor_team, date, location, referee=None, season=None, results=None):
 		super(Game, self).__init__()
 		self.local_team = local_team
 		self.visitor_team = visitor_team
@@ -66,6 +66,26 @@ class Game():
 		self.location = location
 		self.referee = referee
 		self.season = season
+
+	def print(self):
+
+		print('Local team:')
+		print('line 1:')
+		for player_key in self.local_team.line1.players.keys():
+			print(player_key, player)
+		print('line 2:')
+		for player_key in self.local_team.line2.players.keys():
+			print(player_key, player)
+
+		print('Visitor team:')
+		print('line 1:')
+		for player_key in self.visitor_team.line1.players.keys():
+			print(player_key, player)
+		print('line 2:')
+		for player_key in self.visitor_team.line2.players.keys():
+			print(player_key, player)
+
+
 
 class Team():
 	"""a team class"""
@@ -80,11 +100,12 @@ class Line():
 	"""a line class (3 offence and 2 defence)"""
 	def __init__(self, name, forward_left, forward_right, center, defense_left, defence_right):
 		self.name = name
-		self.forward_left = forward_left
-		self.forward_right = forward_right
-		self.center = center
-		self.defense_left = defense_left
-		self.defence_right = defence_right
+		self.players['forward_left'] = forward_left
+		self.players['forward_right'] = forward_right
+		self.players['center'] = center
+		self.players['defense_left'] = defense_left
+		self.players['defence_right'] = defence_right
+
 		
 
 class User():
@@ -103,6 +124,9 @@ class Player(User):
 	def __init__(self, mobile, first_name, last_name, position, rank, jersey_number, language):
 		User.__init__(self, mobile, first_name, last_name, position, rank, jersey_number, language)
 		self._type = 'player'
+
+	def __repr__(self):
+		return f'{self.first_name} {self.last_name} '
 
 class Substitute(User):
 	"""docstring for Substitute"""
