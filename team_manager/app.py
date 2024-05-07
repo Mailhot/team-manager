@@ -15,6 +15,12 @@ def check_replacement():
 def replace_player(player):
 	pass
 
+
+def send_reminder(game):
+	pass
+
+
+
 if __name__ == "__main__":
 	df_data = check_replacement()
 	# print(df_data)
