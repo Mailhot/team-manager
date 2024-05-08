@@ -30,7 +30,7 @@ league_deschamps.replace_player(player='Mathieu')
 
 
 for game_key in league_deschamps.games.keys():
-	print(league_deschamps.games[game_key])
+	print(game_key, league_deschamps.games[game_key])
 	league_deschamps.games[game_key].print()
 
 print('total: ', len(league_deschamps.games), 'games')
