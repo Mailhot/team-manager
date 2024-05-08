@@ -88,7 +88,10 @@ def get_data(value=None):
         # print(sheet_data_output)
 
         if len(sheet_data_output.keys()) == 1:
-            sheet_data_output = sheet_data_output['Players']
+            if 'Players' in sheet_data_output.keys():
+                sheet_data_output = sheet_data_output['Players']
+            elif 'Spares' in sheet_data_output.keys():
+                sheet_data_output = sheet_data_output['Spares']
 
     return sheet_data_output
 

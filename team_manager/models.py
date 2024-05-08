@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 import config
-
+from . import helpers
 
 class League():
 	"""" a league class """
@@ -101,16 +101,18 @@ class League():
 			if not game.date < datetime.now().date():
 				return game
 
-	def find_player(self, games=1,):
+	def find_spare(self, games=1,):
 		# find players to replace available spots
 		# TODO: check for the next game or number of next games chosen, 
-		# Find replacement for those games, check spare, and sort by properness of class and favoriteness
-		# Offer thos players to replace
-
+		# Send invitation to players (log result sending and receiving)
+		
+		print()
 		next_game = self.get_next_game()
+		print(f'Finding spares for game', next_game)
+
 		for key in next_game.replacements:
 			if next_game.replacements[key] == None:
-				pass # replace player
+				helpers.get_spares(player=key)
 
 
 
@@ -241,8 +243,8 @@ class User():
 
 class Player(User):
 	"""A player class from a member"""
-	def __init__(self, mobile, first_name, last_name, position, rank, jersey_number, language):
-		User.__init__(self, mobile, first_name, last_name, position, rank, jersey_number, language)
+	def __init__(self, mobile, first_name, last_name, positions, rank, jersey_number, language):
+		super().__init__(mobile, first_name, last_name, positions, rank, jersey_number, language)
 		self._type = 'player'
 
 	def __repr__(self):
@@ -250,8 +252,8 @@ class Player(User):
 
 class Spare(User):
 	"""docstring for Spare"""
-	def __init__(self, ):
-		super(Spare, self).__init__()
+	def __init__(self, mobile, first_name, last_name, positions, rank, jersey_number=None, language='fr'):
+		super().__init__(mobile, first_name, last_name, positions, rank, jersey_number, language)
 		self._type = 'spare'
 
 class Referee(User):
