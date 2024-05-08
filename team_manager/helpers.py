@@ -18,8 +18,11 @@ numeric_rank_dict = {'AAA': 1,
 def get_players():
 	"""get all player list from gsheet"""
 	df_data = gs_link.get_data(value='PLAYERS')
-	data_dict = df_data.to_dict('records')
 	print('df_data', df_data)
+	data_dict = df_data.to_dict('records')
+	df_phones = df_data[['Grouped Name', 'Numero']]
+	print(df_phones.to_json(orient="records"))
+	
 	players_out = []
 	for value in data_dict:
 		print(value['Numero'])
@@ -64,3 +67,6 @@ def get_spares(player=None):
 
 	# print(players_out)
 	return players_out
+
+if __name__ == '__main__':
+	get_players()
