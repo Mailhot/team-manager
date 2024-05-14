@@ -29,14 +29,15 @@ league_deschamps.games[34].location = 'St-Tim'
 league_deschamps.replace_player(player='Mathieu')
 
 
+
 for game_key in league_deschamps.games.keys():
 	print(game_key, league_deschamps.games[game_key])
 	league_deschamps.games[game_key].print()
 
 print('total: ', len(league_deschamps.games), 'games')
 
-
 league_deschamps.find_spare()
+
 
 # # generate a game
 # team1 = models.Team(line1=line1, line2=line2, goaler=players[19], substitution=None)
