@@ -26,7 +26,7 @@ league_deschamps.generate_games(season=season_2024, weekday=1, time='20:00')
 print(league_deschamps.games)
 league_deschamps.games[34].location = 'St-Tim'
 # league_deschamps.games[33].local_team.line1.players['forward_left'] = None
-league_deschamps.replace_player(player='Mathieu')
+league_deschamps.replace_player(player='Mathieu', games=3)
 
 
 

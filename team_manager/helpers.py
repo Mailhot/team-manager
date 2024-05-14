@@ -56,10 +56,12 @@ def get_spares(player=None):
 	# print(df_data)
 	# df_data['rank_diff'] = numeric_rank_dict[player.rank] - df_data['Rank']
 	data_dict = df_data.to_dict('records')
+	print()
+	print('replacement list for: ', player)
 	print('df_data', df_data)
 	players_out = []
 	for value in data_dict:
-		print(value['Numero'])
+		# print(value['Numero'])
 		player1 = models.Spare(mobile=value['Numero'], first_name=value['Prenom'], last_name=value['Nom'], positions=value['Positions'], rank=value['Rank'], language='fr')
 		players_out.append(player1)
 

@@ -12,13 +12,6 @@ def check_replacement():
 			print('YES', row['Remplacant'])
 	return df_data
 
-def replace_player(player):
-	pass
-
-
-def send_reminder(game):
-	pass
-
 
 
 if __name__ == "__main__":

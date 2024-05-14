@@ -66,8 +66,9 @@ class League():
 		# TODO: Contact Substitute in classified suitability order.
 		# TODO: If substitute confirmed, replace player
 		player_class = self.get_player(player)
-		next_game = self.get_next_game()
-		next_game.replacements[player_class] = spare
+		next_games = self.get_next_game(games)
+		for game_ in next_games:
+			game_.replacements[player_class] = spare
 		# for key in next_game.teams.keys():
 		# 	# next_game.teams[key]
 		# 	for player_key in next_game.teams[key].line1.players.keys():
@@ -95,11 +96,18 @@ class League():
 			return positive_match[0]
 
 
-	def get_next_game(self,):
-		for game_key in self.games.keys():
+	def get_next_game(self, games=1):
+		games_out = []
+		for game_key in self.games.keys(): #TODO: probably add a sorted
 			game = self.games[game_key]
-			if not game.date < datetime.now().date():
-				return game
+			if not game.date < datetime.now().date(): #TODO: this is not robust if the key are not in order
+				if games == 1:
+					return [game]
+				else:
+					games_out.append(game)
+					if len(games_out) == games:
+						return games_out
+
 
 	def find_spare(self, games=1,):
 		# find players to replace available spots
@@ -107,12 +115,14 @@ class League():
 		# Send invitation to players (log result sending and receiving)
 		
 		print()
-		next_game = self.get_next_game()
-		print(f'Finding spares for game', next_game)
+		next_game = self.get_next_game(games)
+		
 
-		for key in next_game.replacements:
-			if next_game.replacements[key] == None:
-				helpers.get_spares(player=key)
+		for game_ in next_game:
+			print(f'Finding spares for game', next_game)
+			for key in game_.replacements:
+				if game_.replacements[key] == None:
+					helpers.get_spares(player=key)
 
 
 
@@ -196,11 +206,7 @@ class Game():
 				print(player_key, player)
 		print()
 
-	def replace_player(self, player_name, spare_name):
-		# TODO: find the player in the current player list, make sure it's the only result. 
-		# find the spare in the spare list
-		# replace the player in it's position with the spare. 
-		pass
+
 
 
 
