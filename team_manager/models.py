@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 import config
 from . import helpers
+from .interface import twilio_link
 
 class League():
 	"""" a league class """
@@ -119,10 +120,22 @@ class League():
 		
 
 		for game_ in next_game:
-			print(f'Finding spares for game', next_game)
+			print(type(game_.spares))
+			if not type(game_.spares) == pd.dataframe:
+				game_.spares = helpers.get_spares(player=None)
+
+			print(f'Finding spares for game', game_)
 			for key in game_.replacements:
 				if game_.replacements[key] == None:
-					helpers.get_spares(player=key)
+					print(key)
+					to_contact_spare = game_.get_spares(player=key)
+					to_contact_row = to_contact_spare.iloc[0]
+					# twilio_link.pushover(numbers=[to_contact_spare.at[0, 'Numero']], 'Peut-tu remplacer au hockey ce mardi 20:00 au centre civic?')
+					# TODO: Send invitation to player
+					game_.spares.loc[game_.spares['Grouped Name'] == to_contact_row['Grouped Name'], 'Contacted'] = True
+
+					print(game_.spares)
+
 
 
 
@@ -143,13 +156,14 @@ class Season():
 
 class Game():
 	"""a game class"""
-	def __init__(self, teams, date, time, location, referee=None, season=None, results=None):
+	def __init__(self, teams, date, time, location, referee=None, season=None, results=None, spares=None):
 		self.teams = teams
 		self.date = date
 		self.time = time
 		self.location = location
 		self.referee = referee
 		self.season = season
+		self.spares = spares #dataframe of spare players
 
 		self.replacements = {} # a dict with players: substitute values for replacement
 
@@ -207,6 +221,24 @@ class Game():
 		print()
 
 
+	def get_spares(self, player):
+		# print(self.spares)
+
+		df_data = self.spares[self.spares['Contacted'] == False]
+
+		df_data['rank_diff'] = df_data.apply(lambda x: helpers.get_rank_diff(player_rank=player.rank, spare_rank=x['Rank']), axis=1)
+		df_data['position_match'] = df_data.apply(lambda x: helpers.position_match(player.position, x['Positions']), axis=1)
+		df_data = df_data.sort_values(['position_match', 'rank_diff'], ascending=False)
+		print()
+		print('replacement for ', player)
+		print(df_data)
+		return df_data
+
+			
+
+		
+
+
 
 
 
@@ -252,6 +284,7 @@ class Player(User):
 	def __init__(self, mobile, first_name, last_name, positions, rank, jersey_number, language):
 		super().__init__(mobile, first_name, last_name, positions, rank, jersey_number, language)
 		self._type = 'player'
+		self.grouped_name = first_name + last_name
 
 	def __repr__(self):
 		return f'{self.first_name} {self.last_name} '

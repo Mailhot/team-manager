@@ -96,7 +96,7 @@ def nearest(items, pivot):
     return min(items, key=lambda x: abs(x - pivot))
 
 
-def pushover(msg, user):
+def pushover(numbers, msg, ):
     # Your Account Sid and Auth Token from twilio.com/console
 
     account_sid = os.environ["TWILIO_ACCOUNT_SID"]

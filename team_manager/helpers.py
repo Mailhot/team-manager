@@ -49,26 +49,30 @@ def get_spares(player=None):
 	''' get spares list from gsheet '''
 	df_data = gs_link.get_data(value='SPARE')
 	df_data['Positions'] = df_data['Positions'].apply(lambda x: x.split(','))
+	df_data['Contacted'] = False # Contacted by sms
+	df_data['Available'] = False # Answered yes
+	df_data['Confirmed'] = False # Replied to him that he is comming
+	
 	# sort dataframe by rank and position
-	df_data['rank_diff'] = df_data.apply(lambda x: get_rank_diff(player_rank=player.rank, spare_rank=x['Rank']), axis=1)
-	df_data['position_match'] = df_data.apply(lambda x: position_match(player.position, x['Positions']), axis=1)
-	df_data = df_data.sort_values(['position_match', 'rank_diff'], ascending=False)
-	# print(df_data)
-	# df_data['rank_diff'] = numeric_rank_dict[player.rank] - df_data['Rank']
+	if player != None:
+		df_data['rank_diff'] = df_data.apply(lambda x: get_rank_diff(player_rank=player.rank, spare_rank=x['Rank']), axis=1)
+		df_data['position_match'] = df_data.apply(lambda x: position_match(player.position, x['Positions']), axis=1)
+		df_data = df_data.sort_values(['position_match', 'rank_diff'], ascending=False)
+
 	data_dict = df_data.to_dict('records')
 	print()
 	print('replacement list for: ', player)
 	print('df_data', df_data)
-	players_out = []
-	for value in data_dict:
-		# print(value['Numero'])
-		player1 = models.Spare(mobile=value['Numero'], first_name=value['Prenom'], last_name=value['Nom'], positions=value['Positions'], rank=value['Rank'], language='fr')
-		players_out.append(player1)
+	# players_out = []
+	# for value in data_dict:
+	# 	# print(value['Numero'])
+	# 	player1 = models.Spare(mobile=value['Numero'], first_name=value['Prenom'], last_name=value['Nom'], positions=value['Positions'], rank=value['Rank'], language='fr')
+	# 	players_out.append(player1)
 
 
 
 	# print(players_out)
-	return players_out
+	return df_data
 
 if __name__ == '__main__':
 	get_players()

@@ -37,6 +37,7 @@ for game_key in league_deschamps.games.keys():
 print('total: ', len(league_deschamps.games), 'games')
 
 league_deschamps.find_spare()
+league_deschamps.find_spare()
 
 
 # # generate a game

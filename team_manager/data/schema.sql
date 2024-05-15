@@ -1,0 +1,25 @@
+DROP TABLE IF EXISTS Players;
+DROP TABLE IF EXISTS Spares;
+
+CREATE TABLE Players (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    'Grouped Name' TEXT NOT NULL,
+    'Prenom' TEXT,
+    'Nom' TEXT,
+    Rank TEXT NOT NULL,
+    Positions TEXT NOT NULL,
+    Numero TEXT NOT NULL,
+    Jersey INTEGER
+);
+
+CREATE TABLE Spares (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    'Grouped Name' TEXT NOT NULL,
+    'Prenom' TEXT,
+    'Nom' TEXT,
+    Rank TEXT NOT NULL,
+    Positions TEXT NOT NULL,
+    Numero TEXT NOT NULL
+);
