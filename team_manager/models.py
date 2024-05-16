@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import config
 from . import helpers
 from .interface import twilio_link
+import pandas as pd
 
 class League():
 	"""" a league class """
@@ -120,8 +121,7 @@ class League():
 		
 
 		for game_ in next_game:
-			print(type(game_.spares))
-			if not type(game_.spares) == pd.dataframe:
+			if not isinstance(game_.spares, pd.DataFrame):
 				game_.spares = helpers.get_spares(player=None)
 
 			print(f'Finding spares for game', game_)
@@ -206,8 +206,8 @@ class Game():
 				print(player_key, default_player, '>', player)
 			else:
 				player=default_player
-
-				print(player_key, player)
+				print(player_key, player) 
+				
 		print(self.teams['visitor'].line2.name)
 		for player_key in self.teams['visitor'].line2.players.keys():
 			default_player = self.teams['visitor'].line2.players[player_key]
@@ -227,7 +227,7 @@ class Game():
 		df_data = self.spares[self.spares['Contacted'] == False]
 
 		df_data['rank_diff'] = df_data.apply(lambda x: helpers.get_rank_diff(player_rank=player.rank, spare_rank=x['Rank']), axis=1)
-		df_data['position_match'] = df_data.apply(lambda x: helpers.position_match(player.position, x['Positions']), axis=1)
+		df_data.loc[:, 'position_match'] = df_data.apply(lambda x: helpers.position_match(player.position, x['Positions']), axis=1)
 		df_data = df_data.sort_values(['position_match', 'rank_diff'], ascending=False)
 		print()
 		print('replacement for ', player)
