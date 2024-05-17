@@ -9,7 +9,7 @@ import config
 
 
 # If modifying these scopes, delete the file token.json.
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets', ]#'https://www.googleapis.com/auth/documents']
+SCOPES = ['https://www.googleapis.com/auth/drive.file']   #['https://www.googleapis.com/auth/spreadsheets', ]#'https://www.googleapis.com/auth/documents']
 
 # here enter the id of your google sheet
 SAMPLE_SPREADSHEET_ID_input = config.SAMPLE_SPREADSHEET_ID_input
@@ -21,27 +21,14 @@ sheet_data_dict = {'SPARE': config.SPARE,
                 'ALIGNMENT': config.ALIGNMENT, 
                 'SCHEDULE': config.SCHEDULE,
                 }
+
 SPARE = config.SPARE
 PLAYERS = config.PLAYERS
 REPLACEMENT = config.REPLACEMENT
 ALIGNMENT = config.ALIGNMENT
 SCHEDULE = config.SCHEDULE
 
-
-def get_data(value=None):
-    """ value: list of terms (in the sheet_data_dict keys), or a single text string"""
-    global values_input, service
-
-    if value == None: 
-        sheet_data = [SPARE, PLAYERS, REPLACEMENT, ALIGNMENT, SCHEDULE]
-    
-    elif type(value) == list:
-        sheet_data = []
-        for element in value:
-            sheet_data.append(sheet_data_dict[element])
-    elif type(value) == str:
-        sheet_data = [sheet_data_dict[value]]
-        
+def get_creds_or_create():
     creds = None
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
@@ -60,7 +47,24 @@ def get_data(value=None):
         # Save the credentials for the next run
         with open(config.token_location, 'w') as token:
             token.write(creds.to_json())
+    return creds
 
+def get_data(value=None):
+    """ value: list of terms (in the sheet_data_dict keys), or a single text string"""
+    global values_input, service
+
+    if value == None: 
+        sheet_data = [SPARE, PLAYERS, REPLACEMENT, ALIGNMENT, SCHEDULE]
+    
+    elif type(value) == list:
+        sheet_data = []
+        for element in value:
+            sheet_data.append(sheet_data_dict[element])
+    elif type(value) == str:
+        sheet_data = [sheet_data_dict[value]]
+
+
+    creds = get_creds_or_create()
     service1 = build('sheets', 'v4', credentials=creds)
     
     # Call the Sheets API
@@ -96,7 +100,34 @@ def get_data(value=None):
     return sheet_data_output
 
 
+def create(title):
+  """
+  Creates the Sheet the user has access to.
+  Load pre-authorized user credentials from the environment.
+  TODO(developer) - See https://developers.google.com/identity
+  for guides on implementing OAuth2 for the application.
+  """
+  creds = get_creds_or_create()
+  # pylint: disable=maybe-no-member
+  try:
+    service = build("sheets", "v4", credentials=creds)
+    spreadsheet = {"properties": {"title": title}}
+    spreadsheet = (
+        service.spreadsheets()
+        .create(body=spreadsheet, fields="spreadsheetId")
+        .execute()
+    )
+    print(f"Spreadsheet ID: {(spreadsheet.get('spreadsheetId'))}")
+    return spreadsheet.get("spreadsheetId")
+  except HttpError as error:
+    print(f"An error occurred: {error}")
+    return error
+
+
+
+  
 if __name__ == '__main__':
+    #create("mysheet1")
     df_list = main()
 
     for key in df_list.keys():
