@@ -50,8 +50,8 @@ def get_spares(player=None):
 	df_data = gs_link.get_data(value='SPARE')
 	df_data['Positions'] = df_data['Positions'].apply(lambda x: x.split(','))
 	df_data['Contacted'] = False # Contacted by sms
-	df_data['Available'] = False # Answered yes
-	df_data['Confirmed'] = False # Replied to him that he is comming
+	df_data['Available'] = None # Answered yes
+	df_data['Confirmed'] = None # Replied to him that he is comming
 	
 	# sort dataframe by rank and position
 	if player != None:

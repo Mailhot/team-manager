@@ -8,7 +8,7 @@ import config
 # complete_data = gs_link.get_data('PLAYERS')
 players = helpers.get_players()
 
-league_deschamps = models.League()
+league_deschamps = models.League() 
 
 league_deschamps.players = players
 

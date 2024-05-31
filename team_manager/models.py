@@ -137,6 +137,12 @@ class League():
 					print(game_.spares)
 
 
+	def set_player_present(self, player, games=1):
+		print()
+		next_game = self.get_next_game(games)
+
+		for game_ in next_game:
+			print(f'setting player')
 
 
 class Season():
