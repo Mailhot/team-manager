@@ -14,7 +14,7 @@ league_deschamps.players = players
 
 season_2024 = models.Season(name='2024-2025', start_date='2024-09-03', stop_date='2025-04-29')	
 
-print('players', players)
+# print('players', players)
 line1 = models.Line(name='Ligne 1', forward_left=players[0], forward_right=players[1], center=players[2], defense_left=players[3], defence_right=players[4])
 line2 = models.Line(name='Ligne 2', forward_left=players[5], forward_right=players[6], center=players[7], defense_left=players[8], defence_right=players[9])
 line3 = models.Line(name='Ligne 3', forward_left=players[10], forward_right=players[11], center=players[12], defense_left=players[13], defence_right=players[14])

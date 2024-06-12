@@ -18,6 +18,18 @@ def get_players_from_db():
             players_out.append(player1)
     return players_out
 
+def get_spares_from_db():
+    """get all spares list from db"""
+    conn = get_db_connection()
+    curs = conn.cursor()
+    spares = curs.execute('SELECT * FROM Spares').fetchall()
+    conn.close()
+    print('spares', spares)
+    spares_out = []
+    for value in spares:
+            spare1 = models.Spare(mobile=value['Numero'], first_name=value['Prenom'], last_name=value['Nom'], positions=value['Positions'].split(','), rank=value['Rank'], jersey_number=None, language='fr')
+            spares_out.append(spare1)
+    return spares_out
 
 def get_db_connection():
     conn = sqlite3.connect(config.DATABASE)
@@ -28,3 +40,7 @@ if __name__ == "__main__":
     players = get_players_from_db()
     for player in players:
         print(player)
+
+    spares = get_spares_from_db()
+    for spare in spares:
+        print(spare)

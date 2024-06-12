@@ -21,7 +21,8 @@ def get_players():
 	print('df_data', df_data)
 	data_dict = df_data.to_dict('records')
 	df_phones = df_data[['Grouped Name', 'Numero']]
-	print(df_phones.to_json(orient="records"))
+	# can be used to export contacts
+	# print(df_phones.to_json(orient="records"))
 	
 	players_out = []
 	for value in data_dict:
