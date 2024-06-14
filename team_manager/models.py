@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import config
 from . import helpers
-from .interface import twilio_link
+from .data import twilio_link
 import pandas as pd
 
 class League():
@@ -97,6 +97,20 @@ class League():
 		if len(positive_match) == 1:
 			return positive_match[0]
 
+	def get_spare(self, first_name, last_name):
+		positive_match = []
+		for spare in self.spares:
+			if first_name.lower() in player.first_name.lower():
+				positive_match.append(player)
+
+		if len(positive_match) > 1:
+			print('too many results')
+			for player in positive_match:
+				print(player)
+			return None
+
+		if len(positive_match) == 1:
+			return positive_match[0]
 
 	def get_next_game(self, games=1):
 		games_out = []
@@ -115,16 +129,23 @@ class League():
 		# find players to replace available spots
 		# TODO: check for the next game or number of next games chosen, 
 		# Send invitation to players (log result sending and receiving)
-		
+		"""
+		THis function check the database for spare on the next game, 
+		It will check if a change has happened by looking at the sqlite db variable: msgIn date_ variable.
+		If no change happened in the config.NO_NEWS_DELAY time, we contact a new spare.
+		"""
+
 		print()
 		next_game = self.get_next_game(games)
 		
 
 		for game_ in next_game:
+			# If no spare list have been created for the next game, create one
 			if not isinstance(game_.spares, pd.DataFrame):
 				game_.spares = helpers.get_spares(player=None)
 
 			print(f'Finding spares for game', game_)
+			# Find matching spare in the spare list for the next game.
 			for key in game_.replacements:
 				if game_.replacements[key] == None:
 					print(key)
@@ -132,6 +153,7 @@ class League():
 					to_contact_row = to_contact_spare.iloc[0]
 					# twilio_link.pushover(numbers=[to_contact_spare.at[0, 'Numero']], 'Peut-tu remplacer au hockey ce mardi 20:00 au centre civic?')
 					# TODO: Send invitation to player
+					twilio_link.send_message(to_contact_row['Numero'], f"Hey {to_contact_row['Prenom']} can you replace next Tuesday at 19:00")
 					game_.spares.loc[game_.spares['Grouped Name'] == to_contact_row['Grouped Name'], 'Contacted'] = True
 
 					print(game_.spares)
@@ -143,8 +165,41 @@ class League():
 
 		for game_ in next_game:
 			print(f'setting player')
+			game_.spares.loc['']
 
 
+	def set_spare_availability(self, number, available=False, games=1):
+		print()
+		print('setting spare available', number)
+		next_game = self.get_next_game(games)
+		for game_ in next_game:
+			if not isinstance(game_.spares, pd.DataFrame):
+				print('Error: no spare list created yet, you need to run find_spare first?')
+				twilio_link.send_message(number, 'Spare not yet open for next game')
+
+			game_.spares.loc[game_.spares['Numero'].str.contains(number), 'Available'] = available
+
+			print(game_.spares)
+
+
+	def check_and_confirm(self,):
+		print()
+		print('checking spare')
+		next_game = self.get_next_game(1)
+		for game_ in next_game:
+			if not isinstance(game_.spares, pd.DataFrame):
+				print('Error: no spare list created yet, you need to run find_spare first?')
+				print('skipped')
+				return ''
+			
+			# print(available_spares)
+			for key in game_.replacements:
+				if game_.replacements[key] == None:
+					print(key)
+					to_contact_spares = game_.get_spares(player=key)
+					to_contact_spares_available = to_contact_spares.loc[to_contact_spares['Available'] == True, :]
+					print('to_contact_spares', to_contact_spares)
+					to_contact_row = to_contact_spares.iloc[0]
 class Season():
 	"""a season class"""
 	def __init__(self, start_date, stop_date, name):
@@ -297,9 +352,13 @@ class Player(User):
 
 class Spare(User):
 	"""docstring for Spare"""
-	def __init__(self, mobile, first_name, last_name, positions, rank, jersey_number=None, language='fr'):
+	def __init__(self, mobile, first_name, last_name, positions, rank, favoriteness=3, jersey_number=None, language='fr'):
 		super().__init__(mobile, first_name, last_name, positions, rank, jersey_number, language)
 		self._type = 'spare'
+		self.favoriteness = favoriteness
+
+	def __repr__(self):
+		return f'{self.first_name} {self.last_name} '
 
 class Referee(User):
 	"""docstring for Referee"""

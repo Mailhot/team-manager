@@ -21,5 +21,12 @@ CREATE TABLE Spares (
     'Nom' TEXT,
     Rank TEXT NOT NULL,
     Positions TEXT NOT NULL,
-    Numero TEXT NOT NULL
+    Numero TEXT NOT NULL,
+    Favoriteness INTEGER DEFAULT 3
+);
+
+CREATE TABLE Parameters (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    date_ TIMESTAMP NOT NULL
 );

@@ -4,7 +4,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 import os
-import pickle
+# import pickle
 import config
 
 
@@ -15,14 +15,15 @@ SCOPES = ['https://www.googleapis.com/auth/drive.file']   #['https://www.googlea
 SAMPLE_SPREADSHEET_ID_input = config.SAMPLE_SPREADSHEET_ID_input
 
 
-sheet_data_dict = {'SPARE': config.SPARE,
+sheet_data_dict = {'SPARES': config.SPARES,
                 'PLAYERS': config.PLAYERS,
-                'REPLACEMENT': config.REPLACEMENT, 
-                'ALIGNMENT': config.ALIGNMENT, 
-                'SCHEDULE': config.SCHEDULE,
                 }
+                # 'REPLACEMENT': config.REPLACEMENT, 
+                # 'ALIGNMENT': config.ALIGNMENT, 
+                # 'SCHEDULE': config.SCHEDULE,
+                # }
 
-SPARE = config.SPARE
+SPARES = config.SPARES
 PLAYERS = config.PLAYERS
 REPLACEMENT = config.REPLACEMENT
 ALIGNMENT = config.ALIGNMENT
@@ -50,11 +51,15 @@ def get_creds_or_create():
     return creds
 
 def get_data(value=None):
-    """ value: list of terms (in the sheet_data_dict keys), or a single text string"""
+    """ Get data from a google sheet based on a 'value':
+    value: a string that is a key to sheet_data to determine what value you want, currently SPARES or PLAYERS
+    output: return a dataframe with the google sheet data, empty values are replaced with None.
+    """
+
     global values_input, service
 
     if value == None: 
-        sheet_data = [SPARE, PLAYERS, REPLACEMENT, ALIGNMENT, SCHEDULE]
+        sheet_data = [SPARES, PLAYERS] #, REPLACEMENT, ALIGNMENT, SCHEDULE]
     
     elif type(value) == list:
         sheet_data = []
@@ -83,12 +88,14 @@ def get_data(value=None):
                 value_ += none_list
 
         # print('values:', values_input)
-        if not values_input and not values_expansion:
+        if not values_input:
             print('No data found.')
 
         df=pd.DataFrame(values_input[1:], columns=values_input[0])
-
+        # print('sheet_data_output', sheet_data_output, df)
+        # print('result_input', result_input)
         sheet_data_output[result_input['range'].split('!')[0]] = df
+        # sheet_data_output[]
         # print(sheet_data_output)
 
         if len(sheet_data_output.keys()) == 1:
@@ -128,9 +135,10 @@ def create(title):
   
 if __name__ == '__main__':
     #create("mysheet1")
-    df_list = main()
+    df_list = get_data('SPARES')
+    print(df_list)
 
-    for key in df_list.keys():
-        print()
-        print(key)
-        print(df_list[key])
+    # for key in df_list.keys():
+    #     print()
+    #     print(key)
+    #     print(df_list[key])

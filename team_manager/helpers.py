@@ -48,7 +48,7 @@ def position_match(player_positions, spare_positions):
 
 def get_spares(player=None):
 	''' get spares list from gsheet '''
-	df_data = gs_link.get_data(value='SPARE')
+	df_data = gs_link.get_data(value='SPARES')
 	df_data['Positions'] = df_data['Positions'].apply(lambda x: x.split(','))
 	df_data['Contacted'] = False # Contacted by sms
 	df_data['Available'] = None # Answered yes

@@ -38,6 +38,11 @@ print('total: ', len(league_deschamps.games), 'games')
 
 league_deschamps.find_spare()
 league_deschamps.find_spare()
+league_deschamps.set_spare_availability('1234560064', True) # Eric replied as available
+league_deschamps.set_spare_availability('1234560055', True) # Fred replied as available
+league_deschamps.check_and_confirm() # Check spare, and confirm available, other in stanby (run every 2 minutes)
+
+
 
 
 # # generate a game
