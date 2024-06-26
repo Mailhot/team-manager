@@ -100,16 +100,16 @@ class League():
 	def get_spare(self, first_name, last_name):
 		positive_match = []
 		for spare in self.spares:
-			if first_name.lower() in player.first_name.lower():
-				positive_match.append(player)
+			if first_name.lower() in spare.first_name.lower():
+				positive_match.append(spare)
 
 		if len(positive_match) > 1:
 			print('too many results')
-			for player in positive_match:
-				print(player)
+			for spare in positive_match:
+				print(spare)
 			return None
 
-		if len(positive_match) == 1:
+		elif len(positive_match) == 1:
 			return positive_match[0]
 
 	def get_next_game(self, games=1):
@@ -149,11 +149,12 @@ class League():
 			for key in game_.replacements:
 				if game_.replacements[key] == None:
 					print(key)
-					to_contact_spare = game_.get_spares(player=key)
+					to_contact_spare = game_.get_spares(player=key, contacted=False)
 					to_contact_row = to_contact_spare.iloc[0]
-					# twilio_link.pushover(numbers=[to_contact_spare.at[0, 'Numero']], 'Peut-tu remplacer au hockey ce mardi 20:00 au centre civic?')
 					# TODO: Send invitation to player
-					twilio_link.send_message(to_contact_row['Numero'], f"Hey {to_contact_row['Prenom']} can you replace next Tuesday at 19:00")
+					twilio_link.send_message(to_contact_row['Numero'], 
+						f"Salut {to_contact_row['Prenom']} peut tu remplacer \
+						Mardi {game_.time} au {game_.location}")
 					game_.spares.loc[game_.spares['Grouped Name'] == to_contact_row['Grouped Name'], 'Contacted'] = True
 
 					print(game_.spares)
@@ -183,6 +184,7 @@ class League():
 
 
 	def check_and_confirm(self,):
+		# check spare list, mark available as confirmed if possible
 		print()
 		print('checking spare')
 		next_game = self.get_next_game(1)
@@ -193,13 +195,24 @@ class League():
 				return ''
 			
 			# print(available_spares)
-			for key in game_.replacements:
+			for key in game_.replacements.keys():
+				print('----------------------', game_.replacements)
 				if game_.replacements[key] == None:
-					print(key)
-					to_contact_spares = game_.get_spares(player=key)
+					# print(key)
+					to_contact_spares = game_.get_spares(player=key, contacted=True)
 					to_contact_spares_available = to_contact_spares.loc[to_contact_spares['Available'] == True, :]
-					print('to_contact_spares', to_contact_spares)
-					to_contact_row = to_contact_spares.iloc[0]
+					to_contact_spares_not_confirmed = to_contact_spares_available.loc[to_contact_spares_available['Confirmed'] != True, :]
+					# print('to_contact_spares_not_confirmed', to_contact_spares_not_confirmed)
+					to_contact_row = to_contact_spares_not_confirmed.iloc[0]
+					# print('to contact row', to_contact_row)
+					twilio_link.send_message(to_contact_row['Numero'], f"Salut {to_contact_row['Prenom']} tu est confirmer pour le match de Mardi a {game_.time} a {game_.location}")
+				
+					game_.replacements[key] = to_contact_row['Grouped Name'] # TODO: the get spare function does not work so we just use the name for now.
+					# set the confirmed spare as confirmed
+					game_.spares.loc[game_.spares['Numero'].str.contains(to_contact_row['Numero']), 'Confirmed'] = True
+					print('new game spare list')
+					print(game_.spares)
+
 class Season():
 	"""a season class"""
 	def __init__(self, start_date, stop_date, name):
@@ -282,10 +295,10 @@ class Game():
 		print()
 
 
-	def get_spares(self, player):
+	def get_spares(self, player, contacted=False):
 		# print(self.spares)
 
-		df_data = self.spares[self.spares['Contacted'] == False]
+		df_data = self.spares[self.spares['Contacted'] == contacted]
 
 		df_data['rank_diff'] = df_data.apply(lambda x: helpers.get_rank_diff(player_rank=player.rank, spare_rank=x['Rank']), axis=1)
 		df_data.loc[:, 'position_match'] = df_data.apply(lambda x: helpers.position_match(player.position, x['Positions']), axis=1)
