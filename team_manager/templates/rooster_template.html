@@ -16,8 +16,9 @@
     .col-2 { padding-right: 5px; 
         padding-left: 5px;
       }
+    @page {size: landscape;}
   </style>
-  <title>HTML Elements Reference</title>
+  <title>Ligue Deschamps</title>
 </head>
 
 <body>
@@ -25,14 +26,14 @@
 
 
 <div class="container">
-  <h1>This is a heading</h1>
-<p>This is a paragraph.</p>
+  <h1>Partie #{{ game_number }} - {{ game.date }} a {{ game.time }}</h1>
+<p>Emplacement: {{ game.location }}</p>
   <div class="row">
     <div class="col-6 border bg-warning">
-      <h3 class="text-center ">Visiteurs (1 et 3)</h3>
+      <h3 class="text-center ">Visiteurs ({{ game.teams['visitor'].line1.name }} et {{ game.teams['visitor'].line2.name}})</h3>
     </div>
     <div class="col-6 border bg-danger">
-      <h3 class="text-center">Locaux (2 et 4)</h3>
+      <h3 class="text-center">Locaux ({{ game.teams['local'].line1.name }} et {{ game.teams['local'].line2.name}})</h3>
     </div>
   </div>
 
@@ -42,8 +43,8 @@
         <div class="card-body">
           <h5 class="card-title">Avant Gauche</h5>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item">1 | Daniel</li>
-            <li class="list-group-item">3 | Roger</li>
+            <li class="list-group-item">{{ game.teams['visitor'].line1.name.split(' ')[-1] }} | {{ game.teams['visitor'].line1.players['forward_left'] }}</li>
+            <li class="list-group-item">{{ game.teams['visitor'].line2.name.split(' ')[-1] }} | {{ game.teams['visitor'].line2.players['forward_left'] }}</li>
           </ul>
         </div>
       </div>
@@ -55,8 +56,8 @@
         <div class="card-body">
           <h5 class="card-title">Avant Droit</h5>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item">Francis</li>
-            <li class="list-group-item">Dapibus ac facilisis in</li>
+            <li class="list-group-item">{{ game.teams['local'].line1.name.split(' ')[-1] }} | {{ game.teams['local'].line1.players['forward_right'] }}</li>
+            <li class="list-group-item">{{ game.teams['local'].line2.name.split(' ')[-1] }} | {{ game.teams['local'].line2.players['forward_right'] }}</li>
           </ul>
         </div>
       </div>
@@ -85,8 +86,8 @@
         <div class="card-body">
           <h5 class="card-title">Defenseur Gauche</h5>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item">Jonathan</li>
-            <li class="list-group-item">Dapibus ac facilisis in</li>
+            <li class="list-group-item">{{ game.teams['visitor'].line1.name.split(' ')[-1] }} | {{ game.teams['visitor'].line1.players['defense_left'] }}</li>
+            <li class="list-group-item">{{ game.teams['visitor'].line2.name.split(' ')[-1] }} | {{ game.teams['visitor'].line2.players['defense_left'] }}</li>
           </ul>
         </div>
       </div>
@@ -97,8 +98,8 @@
         <div class="card-body">
           <h5 class="card-title">Centre</h5>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item">Cras justo odio</li>
-            <li class="list-group-item">Dapibus ac facilisis in</li>
+            <li class="list-group-item">{{ game.teams['visitor'].line1.name.split(' ')[-1] }} | {{ game.teams['visitor'].line1.players['center'] }}</li>
+            <li class="list-group-item">{{ game.teams['visitor'].line2.name.split(' ')[-1] }} | {{ game.teams['visitor'].line2.players['center'] }}</li>
           </ul>
         </div>
       </div>
@@ -108,8 +109,8 @@
         <div class="card-body">
           <h5 class="card-title">Centre</h5>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item">Cras justo odio</li>
-            <li class="list-group-item">Dapibus ac facilisis in</li>
+            <li class="list-group-item">{{ game.teams['local'].line1.name.split(' ')[-1] }} | {{ game.teams['local'].line1.players['center'] }}</li>
+            <li class="list-group-item">{{ game.teams['local'].line2.name.split(' ')[-1] }} | {{ game.teams['local'].line2.players['center'] }}</li>
           </ul>
         </div>
       </div>
@@ -119,8 +120,8 @@
         <div class="card-body">
           <h5 class="card-title">Defenseur Droit</h5>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item">Cras justo odio</li>
-            <li class="list-group-item">Dapibus ac facilisis in</li>
+            <li class="list-group-item">{{ game.teams['local'].line1.name.split(' ')[-1] }} | {{ game.teams['local'].line1.players['defence_right'] }}</li>
+            <li class="list-group-item">{{ game.teams['local'].line2.name.split(' ')[-1] }} | {{ game.teams['local'].line2.players['defence_right'] }}</li>
           </ul>
         </div>
       </div>
@@ -130,7 +131,7 @@
         <div class="card-body">
           <h5 class="card-title">Gardien</h5>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item">Cras justo odio</li>
+            <li class="list-group-item">Jo</li>
 
           </ul>
         </div>
@@ -146,8 +147,8 @@
         <div class="card-body">
           <h5 class="card-title">Defenseur Droit</h5>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item">Cras justo odio</li>
-            <li class="list-group-item">Dapibus ac facilisis in</li>
+            <li class="list-group-item">{{ game.teams['visitor'].line1.name.split(' ')[-1] }} | {{ game.teams['visitor'].line1.players['defence_right'] }}</li>
+            <li class="list-group-item">{{ game.teams['visitor'].line2.name.split(' ')[-1] }} | {{ game.teams['visitor'].line2.players['defence_right'] }}</li>
           </ul>
         </div>
       </div>
@@ -158,8 +159,8 @@
         <div class="card-body">
           <h5 class="card-title">Avant Droit</h5>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item">Cras justo odio</li>
-            <li class="list-group-item">Dapibus ac facilisis in</li>
+            <li class="list-group-item">{{ game.teams['visitor'].line1.name.split(' ')[-1] }} | {{ game.teams['visitor'].line1.players['forward_right'] }}</li>
+            <li class="list-group-item">{{ game.teams['visitor'].line2.name.split(' ')[-1] }} | {{ game.teams['visitor'].line2.players['forward_right'] }}</li>
           </ul>
         </div>
       </div>
@@ -170,8 +171,8 @@
         <div class="card-body">
           <h5 class="card-title">Avant Gauche</h5>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item">Cras justo odio</li>
-            <li class="list-group-item">Dapibus ac facilisis in</li>
+            <li class="list-group-item">{{ game.teams['local'].line1.name.split(' ')[-1] }} | {{ game.teams['local'].line1.players['forward_left'] }}</li>
+            <li class="list-group-item">{{ game.teams['local'].line2.name.split(' ')[-1] }} | {{ game.teams['local'].line2.players['forward_left'] }}</li>
           </ul>
         </div>
       </div>
@@ -181,8 +182,8 @@
         <div class="card-body">
           <h5 class="card-title">Defenseur Gauche</h5>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item">Cras justo odio</li>
-            <li class="list-group-item">Dapibus ac facilisis in</li>
+            <li class="list-group-item">{{ game.teams['local'].line1.name.split(' ')[-1] }} | {{ game.teams['local'].line1.players['defense_left'] }}</li>
+            <li class="list-group-item">{{ game.teams['local'].line2.name.split(' ')[-1] }} | {{ game.teams['local'].line2.players['defense_left'] }}</li>
           </ul>
         </div>
       </div>
@@ -191,14 +192,6 @@
   </div>
 
 </div>
-
-
-
-
-
-
-
-
 
 </body>
 </html>

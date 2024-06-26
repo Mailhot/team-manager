@@ -3,6 +3,7 @@ import config
 from . import helpers
 from .data import twilio_link
 import pandas as pd
+from jinja2 import Environment, FileSystemLoader
 
 class League():
 	"""" a league class """
@@ -34,7 +35,7 @@ class League():
 		# print(l)
 
 		k = 0
-		i = 0
+		i = 1
 		for date in l:
 			this_routing = routing[k]
 			team1 = Team(line1=self.lines.get(this_routing[0][0]), line2=self.lines.get(this_routing[0][1]), goaler=None, substitution=None)
@@ -68,7 +69,7 @@ class League():
 		# TODO: Contact Substitute in classified suitability order.
 		# TODO: If substitute confirmed, replace player
 		player_class = self.get_player(player)
-		next_games = self.get_next_game(games)
+		next_games, _ = self.get_next_game(games)
 		for game_ in next_games:
 			game_.replacements[player_class] = spare
 		# for key in next_game.teams.keys():
@@ -114,15 +115,17 @@ class League():
 
 	def get_next_game(self, games=1):
 		games_out = []
+		games_keys = []
 		for game_key in self.games.keys(): #TODO: probably add a sorted
 			game = self.games[game_key]
 			if not game.date < datetime.now().date(): #TODO: this is not robust if the key are not in order
 				if games == 1:
-					return [game]
+					return [game], game_key
 				else:
 					games_out.append(game)
+					games_keys.append(game_key)
 					if len(games_out) == games:
-						return games_out
+						return games_out, games_keys
 
 
 	def find_spare(self, games=1,):
@@ -136,7 +139,7 @@ class League():
 		"""
 
 		print()
-		next_game = self.get_next_game(games)
+		next_game, _ = self.get_next_game(games)
 		
 
 		for game_ in next_game:
@@ -172,7 +175,7 @@ class League():
 	def set_spare_availability(self, number, available=False, games=1):
 		print()
 		print('setting spare available', number)
-		next_game = self.get_next_game(games)
+		next_game, _ = self.get_next_game(games)
 		for game_ in next_game:
 			if not isinstance(game_.spares, pd.DataFrame):
 				print('Error: no spare list created yet, you need to run find_spare first?')
@@ -187,7 +190,7 @@ class League():
 		# check spare list, mark available as confirmed if possible
 		print()
 		print('checking spare')
-		next_game = self.get_next_game(1)
+		next_game, _ = self.get_next_game(1)
 		for game_ in next_game:
 			if not isinstance(game_.spares, pd.DataFrame):
 				print('Error: no spare list created yet, you need to run find_spare first?')
@@ -212,6 +215,27 @@ class League():
 					game_.spares.loc[game_.spares['Numero'].str.contains(to_contact_row['Numero']), 'Confirmed'] = True
 					print('new game spare list')
 					print(game_.spares)
+
+					
+	def print_game_sheet(self, number):
+		# number: Number of games to be printed
+		next_game, game_key = self.get_next_game(games=number)
+
+		environment = Environment(loader=FileSystemLoader(config.TEMPLATE_DIR))
+		template = environment.get_template("rooster_template.html")
+
+		for game in next_game:
+
+		    filename = f"lineup_{game.date}.html"
+		    content = template.render(
+		        game=game.__dict__,
+		        game_number=game_key
+		    )
+		    with open(filename, mode="w", encoding="iso-8859-1") as message:
+		        message.write(content)
+		        print(f"... wrote {filename}")
+
+
 
 class Season():
 	"""a season class"""

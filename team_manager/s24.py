@@ -24,7 +24,7 @@ league_deschamps.lines = {0: line1, 1: line2, 2: line3, 3:line4}
 
 league_deschamps.generate_games(season=season_2024, weekday=1, time='20:00')
 print(league_deschamps.games)
-league_deschamps.games[34].location = 'St-Tim'
+league_deschamps.games[35].location = 'St-Tim'
 # league_deschamps.games[33].local_team.line1.players['forward_left'] = None
 league_deschamps.replace_player(player='Mathieu', games=3)
 
@@ -44,7 +44,7 @@ league_deschamps.check_and_confirm() # Check spare, and confirm available, other
 print('checking again')
 league_deschamps.check_and_confirm() # Check spare, and confirm available, other in stanby (run every 2 minutes)
 
-
+league_deschamps.print_game_sheet(1)
 
 # # generate a game
 # team1 = models.Team(line1=line1, line2=line2, goaler=players[19], substitution=None)
