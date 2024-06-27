@@ -46,6 +46,8 @@ league_deschamps.check_and_confirm() # Check spare, and confirm available, other
 
 league_deschamps.print_game_sheet(1)
 
+#league_deschamps.line_recap()
+league_deschamps.print_year_sheet()
 # # generate a game
 # team1 = models.Team(line1=line1, line2=line2, goaler=players[19], substitution=None)
 # team2 = models.Team(line1=line3, line2=line4, goaler=players[18], substitution=None)

@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html>
+
+<header>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</header>
+
+
+
+<head>
+  <style>
+    .list-group-item { padding: 0rem;}
+    .card-body { padding: 0.25rem;}
+    .col-2 { padding-right: 5px; 
+        padding-left: 5px;
+      }
+    @page {size: portrait;}
+  </style>
+  <title>Ligue Deschamps</title>
+</head>
+
+<body>
+
+
+
+<div class="container">
+  <h1>Ligue Deschamps - {{ season }}</h1>
+  <p>MARDIS 20:00 HEURES - Arena Centre Civique </p>
+  <div class="row">
+    <div class="col-12 border">
+      <h3 >Responsables: Francis </h3>
+      <h3 >Alexis </h3>
+    </div>
+  </div>
+
+<div class="row">
+  <div class=col-6>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Date</th>
+          <th scope="col">Alignement</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for game_key in games1.keys() %}
+        <tr>
+          <th scope="row">{{ game_key }}</th>
+          <td>{{ games1[game_key].date }}</td>
+          <td>Rouge (Local) {{ games1[game_key].teams['local'].line1.name.split(' ')[-1] }} et {{ games1[game_key].teams['local'].line2.name.split(' ')[-1] }}, <br>Jaune (Visiteurs) {{ games1[game_key].teams['visitor'].line1.name.split(' ')[-1] }} et {{ games1[game_key].teams['visitor'].line2.name.split(' ')[-1] }}</td>
+        </tr>
+        {% endfor %}
+
+      </tbody>
+    </table>
+  </div>
+
+
+
+  <div class="col-6">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Date</th>
+          <th scope="col">Lignes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for game_key in games2.keys() %}
+        <tr>
+          <th scope="row">{{ game_key }}</th>
+          <td>{{ games2[game_key].date }}</td>
+          <td>Rouge (Local) {{ games2[game_key].teams['local'].line1.name.split(' ')[-1] }} et {{ games2[game_key].teams['local'].line2.name.split(' ')[-1] }}, <br>Jaune (Visiteurs) {{ games2[game_key].teams['visitor'].line1.name.split(' ')[-1] }} et {{ games2[game_key].teams['visitor'].line2.name.split(' ')[-1] }}</td>
+        </tr>
+        {% endfor %}
+
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</body>
+</html>
