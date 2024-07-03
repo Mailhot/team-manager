@@ -15,10 +15,10 @@ league_deschamps.players = players
 season_2024 = models.Season(name='2024-2025', start_date='2024-09-03', stop_date='2025-04-29')	
 
 # print('players', players)
-line1 = models.Line(name='Ligne 1', forward_left=players[0], forward_right=players[1], center=players[2], defense_left=players[3], defence_right=players[4])
-line2 = models.Line(name='Ligne 2', forward_left=players[5], forward_right=players[6], center=players[7], defense_left=players[8], defence_right=players[9])
-line3 = models.Line(name='Ligne 3', forward_left=players[10], forward_right=players[11], center=players[12], defense_left=players[13], defence_right=players[14])
-line4 = models.Line(name='Ligne 4', forward_left=players[15], forward_right=players[16], center=players[17], defense_left=players[18], defence_right=players[19])
+line1 = models.Line(name='Ligne 1', forward_left=players[4], forward_right=players[2], center=players[3], defense_left=players[0], defence_right=players[1])
+line2 = models.Line(name='Ligne 2', forward_left=players[8], forward_right=players[9], center=players[7], defense_left=players[5], defence_right=players[6])
+line3 = models.Line(name='Ligne 3', forward_left=players[14], forward_right=players[13], center=players[12], defense_left=players[11], defence_right=players[10])
+line4 = models.Line(name='Ligne 4', forward_left=players[18], forward_right=players[19], center=players[17], defense_left=players[16], defence_right=players[15])
 
 league_deschamps.lines = {0: line1, 1: line2, 2: line3, 3:line4}
 
@@ -26,7 +26,7 @@ league_deschamps.generate_games(season=season_2024, weekday=1, time='20:00')
 print(league_deschamps.games)
 league_deschamps.games[35].location = 'St-Tim'
 # league_deschamps.games[33].local_team.line1.players['forward_left'] = None
-league_deschamps.replace_player(player='Mathieu', games=3)
+league_deschamps.replace_player(player='Patrick', games=3)
 
 
 
@@ -38,8 +38,8 @@ print('total: ', len(league_deschamps.games), 'games')
 
 league_deschamps.find_spare()
 league_deschamps.find_spare() # run every 5 minutes
-league_deschamps.set_spare_availability('1234560064', True) # Eric replied as available
-league_deschamps.set_spare_availability('1234560055', True) # Fred replied as available
+league_deschamps.set_spare_availability('1234560058', True) # Eric replied as available
+league_deschamps.set_spare_availability('1234560060', True) # Fred replied as available
 league_deschamps.check_and_confirm() # Check spare, and confirm available, other in stanby (run every 2 minutes)
 print('checking again')
 league_deschamps.check_and_confirm() # Check spare, and confirm available, other in stanby (run every 2 minutes)

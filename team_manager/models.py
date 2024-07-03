@@ -377,7 +377,8 @@ class Game():
 
         df_data['rank_diff'] = df_data.apply(lambda x: helpers.get_rank_diff(player_rank=player.rank, spare_rank=x['Rank']), axis=1)
         df_data.loc[:, 'position_match'] = df_data.apply(lambda x: helpers.position_match(player.position, x['Positions']), axis=1)
-        df_data = df_data.sort_values(['position_match', 'rank_diff'], ascending=False)
+        df_data['rank_diff'] = df_data['rank_diff'].abs()
+        df_data = df_data.sort_values(['position_match', 'rank_diff', 'Favoriteness'], ascending=[False, True, True])
         print()
         print('replacement for ', player)
         print(df_data)
