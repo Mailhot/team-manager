@@ -67,7 +67,7 @@ class League():
 
 
 
-    def replace_player(self, player, games=1, spare=None):
+    def replace_player(self, player, request_datetime=datetime.now(), games=1, spare=None):
         # This function will replace a player for a number of upcomming games
         # TODO: get games (number 1 = number of games )
         # TODO: get player
@@ -77,7 +77,7 @@ class League():
         # TODO: Contact Substitute in classified suitability order.
         # TODO: If substitute confirmed, replace player
         player_class = self.get_player(player)
-        next_games, _ = self.get_next_game(games)
+        next_games, _ = self.get_next_game(request_datetime=request_datetime, games=games)
         for game_ in next_games:
             game_.replacements[player_class] = spare
         # for key in next_game.teams.keys():
@@ -121,12 +121,13 @@ class League():
         elif len(positive_match) == 1:
             return positive_match[0]
 
-    def get_next_game(self, games=1):
+    def get_next_game(self, request_datetime=datetime.now(), games=1):
         games_out = []
         games_keys = []
         for game_key in self.games.keys(): #TODO: probably add a sorted
             game = self.games[game_key]
-            if not game.date < datetime.now().date(): #TODO: this is not robust if the key are not in order
+            print(request_datetime)
+            if not game.date <= request_datetime.date(): #TODO: this is not robust if the key are not in order
                 if games == 1:
                     return [game], game_key
                 else:
@@ -136,7 +137,7 @@ class League():
                         return games_out, games_keys
 
 
-    def find_spare(self, games=1,):
+    def find_spare(self, request_datetime=datetime.now(), games=1,):
         # find players to replace available spots
         # TODO: check for the next game or number of next games chosen, 
         # Send invitation to players (log result sending and receiving)
@@ -144,10 +145,12 @@ class League():
         THis function check the database for spare on the next game, 
         It will check if a change has happened by looking at the sqlite db variable: msgIn date_ variable.
         If no change happened in the config.NO_NEWS_DELAY time, we contact a new spare.
+        request_datetime: the date and time at which the find_spare is requested
+        games: the number of games from the requested request_datetime to be replaced
         """
 
         print()
-        next_game, _ = self.get_next_game(games)
+        next_game, _ = self.get_next_game(request_datetime, games)
         
 
         for game_ in next_game:
@@ -183,7 +186,7 @@ class League():
     def set_spare_availability(self, number, available=False, games=1):
         print()
         print('setting spare available', number)
-        next_game, _ = self.get_next_game(games)
+        next_game, _ = self.get_next_game(games=games)
         for game_ in next_game:
             if not isinstance(game_.spares, pd.DataFrame):
                 print('Error: no spare list created yet, you need to run find_spare first?')
@@ -198,7 +201,7 @@ class League():
         # check spare list, mark available as confirmed if possible
         print()
         print('checking spare')
-        next_game, _ = self.get_next_game(1)
+        next_game, _ = self.get_next_game(games=1)
         for game_ in next_game:
             if not isinstance(game_.spares, pd.DataFrame):
                 print('Error: no spare list created yet, you need to run find_spare first?')
@@ -232,12 +235,14 @@ class League():
         environment = Environment(loader=FileSystemLoader(config.TEMPLATE_DIR))
         template = environment.get_template("rooster_template.html")
 
-        for game in next_game:
+        for i in range(len(next_game)):
+            game = next_game[i]
+            key = game_key[i]
 
             filename = f"lineup_{game.date}.html"
             content = template.render(
                 game=game.__dict__,
-                game_number=game_key
+                game_number=key
             )
             with open(filename, mode="w", encoding="iso-8859-1") as message:
                 message.write(content)
@@ -254,8 +259,8 @@ class League():
         # Split the dictionary by half using
         # the list comprehension
         half_no = len(games) // 2
-        games_first_half = {k: v for i, (k, v) in enumerate(games.items()) if i < half_no}
-        games_second_half = {k: v for i, (k, v) in enumerate(games.items()) if i >= half_no}
+        games_first_half = {k: v for i, (k, v) in enumerate(games.items()) if i <= half_no}
+        games_second_half = {k: v for i, (k, v) in enumerate(games.items()) if i > half_no}
 
         content = template.render(
                 games1=games_first_half,

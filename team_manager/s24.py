@@ -1,3 +1,4 @@
+from datetime import datetime
 from . import models
 from . import helpers
 from .data import gsheet_link as gs_link
@@ -26,7 +27,8 @@ league_deschamps.generate_games(season=season_2024, weekday=1, time='20:00')
 print(league_deschamps.games)
 league_deschamps.games[35].location = 'St-Tim'
 # league_deschamps.games[33].local_team.line1.players['forward_left'] = None
-league_deschamps.replace_player(player='Patrick', games=3)
+
+league_deschamps.replace_player(request_datetime=datetime(year=2024, month=12, day=31), player='Patrick', games=3)
 
 
 
@@ -44,7 +46,7 @@ league_deschamps.check_and_confirm() # Check spare, and confirm available, other
 print('checking again')
 league_deschamps.check_and_confirm() # Check spare, and confirm available, other in stanby (run every 2 minutes)
 
-league_deschamps.print_game_sheet(1)
+league_deschamps.print_game_sheet(2)
 
 #league_deschamps.line_recap()
 league_deschamps.print_year_sheet()
