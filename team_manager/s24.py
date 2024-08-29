@@ -23,12 +23,13 @@ line4 = models.Line(name='Ligne 4', forward_left=players[18], forward_right=play
 
 league_deschamps.lines = {0: line1, 1: line2, 2: line3, 3:line4}
 
-league_deschamps.generate_games(season=season_2024, weekday=1, time='20:00')
+league_deschamps.generate_games(season=season_2024, weekday=1, time='21:00')
 print(league_deschamps.games)
-league_deschamps.games[35].location = 'St-Tim'
+#league_deschamps.games[35].location = 'St-Tim'
 # league_deschamps.games[33].local_team.line1.players['forward_left'] = None
 
-league_deschamps.replace_player(request_datetime=datetime(year=2024, month=12, day=31), player='Patrick', games=3)
+league_deschamps.replace_player(request_datetime=datetime(year=2024, month=8, day=29), player='Patrick', games=1, spare='Renaud a')
+league_deschamps.replace_player(request_datetime=datetime(year=2024, month=8, day=29), player='James', games=1)
 
 
 
@@ -39,12 +40,12 @@ for game_key in league_deschamps.games.keys():
 print('total: ', len(league_deschamps.games), 'games')
 
 league_deschamps.find_spare()
-league_deschamps.find_spare() # run every 5 minutes
-league_deschamps.set_spare_availability('1234560058', True) # Eric replied as available
-league_deschamps.set_spare_availability('1234560060', True) # Fred replied as available
-league_deschamps.check_and_confirm() # Check spare, and confirm available, other in stanby (run every 2 minutes)
+#league_deschamps.find_spare() # run every 5 minutes
+#league_deschamps.set_spare_availability('1234560058', True) # Eric replied as available
+#league_deschamps.set_spare_availability('1234560060', True) # Fred replied as available
+#league_deschamps.check_and_confirm() # Check spare, and confirm available, other in stanby (run every 2 minutes)
 print('checking again')
-league_deschamps.check_and_confirm() # Check spare, and confirm available, other in stanby (run every 2 minutes)
+#league_deschamps.check_and_confirm() # Check spare, and confirm available, other in stanby (run every 2 minutes)
 
 league_deschamps.print_game_sheet(2)
 
