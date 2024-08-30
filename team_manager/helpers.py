@@ -42,7 +42,8 @@ def get_rank_diff(player_rank, spare_rank):
 
 def position_match(player_positions, spare_positions):
 	# takes a player position list and a spare position list and will return if there is a position match or not.
-	print(player_positions, spare_positions)
+	# print(player_positions, spare_positions)
+	# print(type(player_positions), type(spare_positions))
 	return any(b in player_positions for b in spare_positions)
 
 
@@ -60,20 +61,24 @@ def get_spares(player=None):
 		df_data['position_match'] = df_data.apply(lambda x: position_match(player.position, x['Positions']), axis=1)
 		df_data = df_data.sort_values(['position_match', 'rank_diff'], ascending=False)
 
-	data_dict = df_data.to_dict('records')
-	print()
-	print('replacement list for: ', player)
-	print('df_data', df_data)
-	# players_out = []
-	# for value in data_dict:
-	# 	# print(value['Numero'])
-	# 	player1 = models.Spare(mobile=value['Numero'], first_name=value['Prenom'], last_name=value['Nom'], positions=value['Positions'], rank=value['Rank'], language='fr')
-	# 	players_out.append(player1)
+		
+		print()
+		print('replacement list for: ', player)
+		print('df_data', df_data)
+		return df_data
+
+	else:
+		data_dict = df_data.to_dict('records')
+		spares_out = []
+		for value in data_dict:
+			print(value['Numero'])
+			spare1 = models.Spare(mobile=value['Numero'], first_name=value['Prenom'], last_name=value['Nom'], positions=value['Positions'], rank=value['Rank'], language='fr')
+			spares_out.append(spare1)
 
 
 
-	# print(players_out)
-	return df_data
+		print(spares_out)
+		return spares_out
 
 if __name__ == '__main__':
 	get_players()

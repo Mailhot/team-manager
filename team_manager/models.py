@@ -30,8 +30,9 @@ class League():
                                 ]
 
 
-    def generate_games(self, season, weekday, time, routing=None):
+    def generate_games(self, season, weekday, time, routing=None, filter_=None):
         """generate a series of game based on a season, day of week and time, line group instance"""
+        # filter: list of date (2024-01-01) that needs to be filtered out from the calendar.
         print(self.default_routing)
         if routing == None:
             routing = self.default_routing
@@ -43,10 +44,23 @@ class League():
 
         k = 0
         i = 1
+        
         for date in l:
+            date_filtered_out = False
+            for filtered_date_str in filter_:
+                filtered_date = datetime.strptime(filtered_date_str, '%Y-%m-%d').date()
+                # print(type(filtered_date), type(date))
+                # print(filtered_date, date, filtered_date == date)
+                if filtered_date == date:
+                    date_filtered_out = True
+                    break
+
+            if date_filtered_out == True:
+                continue
+
             this_routing = routing[k]
-            team1 = Team(line1=self.lines.get(this_routing[0][0]), line2=self.lines.get(this_routing[0][1]), goaler=None, substitution=None)
-            team2 = Team(line1=self.lines.get(this_routing[1][0]), line2=self.lines.get(this_routing[1][1]), goaler=None, substitution=None)
+            team1 = Team(line1=self.lines.get(this_routing[0][0]), line2=self.lines.get(this_routing[0][1]), goaler=self.players[21], substitution=None)
+            team2 = Team(line1=self.lines.get(this_routing[1][0]), line2=self.lines.get(this_routing[1][1]), goaler=self.players[20], substitution=None)
 
             game1 = Game(teams={'local': team1, 'visitor': team2}, date=date, time=time, location=config.default_location, referee=None, season=season)
             self.games[i] = game1
@@ -77,21 +91,17 @@ class League():
         # TODO: Contact Substitute in classified suitability order.
         # TODO: If substitute confirmed, replace player
         player_class = self.get_player(player)
+        if spare != None:
+            spare_class = self.get_spare(spare)
+            print('spare found:', spare_class)
+        else:
+            spare_class = None
+        
         next_games, _ = self.get_next_game(request_datetime=request_datetime, games=games)
         for game_ in next_games:
-            game_.replacements[player_class] = spare
-        # for key in next_game.teams.keys():
-        #   # next_game.teams[key]
-        #   for player_key in next_game.teams[key].line1.players.keys():
-        #       if player_class == next_game.teams[key].line1.players[player_key]:
-        #           next_game.teams[key].line1.players[player_key] = spare
-        #           print('player changed:', next_game.date, player, spare)
-        #   for player_key in next_game.teams[key].line2.players.keys():
-        #       if player_class == next_game.teams[key].line2.players[player_key]:
-        #           next_game.teams[key].line2.players[player_key] = spare
-        #           print('player changed:', next_game.date, player, spare)
-    
-    def get_player(self, first_name):
+            game_.replacements[player_class] = spare_class
+
+    def get_player(self, first_name, last_name=None):
         positive_match = []
         for player in self.players:
             if first_name.lower() in player.first_name.lower():
@@ -106,7 +116,7 @@ class League():
         if len(positive_match) == 1:
             return positive_match[0]
 
-    def get_spare(self, first_name, last_name):
+    def get_spare(self, first_name, last_name=None):
         positive_match = []
         for spare in self.spares:
             if first_name.lower() in spare.first_name.lower():
@@ -167,8 +177,7 @@ class League():
                     to_contact_row = to_contact_spare.iloc[0]
                     # TODO: Send invitation to player
                     twilio_link.send_message(to_contact_row['Numero'], 
-                        f"Salut {to_contact_row['Prenom']} peut tu remplacer \
-                        Mardi {game_.time} au {game_.location}")
+                        f"Salut {to_contact_row['Prenom']} pourrais-tu remplacer Mardi {game_.time} au {game_.location}")
                     game_.spares.loc[game_.spares['Grouped Name'] == to_contact_row['Grouped Name'], 'Contacted'] = True
 
                     print(game_.spares)
@@ -349,6 +358,7 @@ class Game():
                 player=default_player
 
                 print(player_key, player)
+        print('Goaler:', self.teams['local'].goaler)
         
         print()
         print('Visitor team:')
@@ -372,6 +382,7 @@ class Game():
                 player=default_player
 
                 print(player_key, player)
+        print('Goaler:', self.teams['visitor'].goaler)
         print()
 
 
@@ -379,6 +390,8 @@ class Game():
         # print(self.spares)
 
         df_data = self.spares[self.spares['Contacted'] == contacted]
+        df_data = df_data.loc[df_data['Available'] != False] # Do not select spare that are set as unavailable
+        # print('df_data1', df_data)
 
         df_data['rank_diff'] = df_data.apply(lambda x: helpers.get_rank_diff(player_rank=player.rank, spare_rank=x['Rank']), axis=1)
         df_data.loc[:, 'position_match'] = df_data.apply(lambda x: helpers.position_match(player.position, x['Positions']), axis=1)
@@ -449,6 +462,7 @@ class Spare(User):
     def __init__(self, mobile, first_name, last_name, positions, rank, favoriteness=3, jersey_number=None, language='fr'):
         super().__init__(mobile, first_name, last_name, positions, rank, jersey_number, language)
         self._type = 'spare'
+        self.grouped_name = first_name + last_name
         self.favoriteness = favoriteness
 
     def __repr__(self):

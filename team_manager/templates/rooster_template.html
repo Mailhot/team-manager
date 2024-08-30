@@ -75,7 +75,7 @@
         <div class="card-body">
           <h5 class="card-title">Gardien</h5>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item">James</li>
+            <li class="list-group-item{{ ' list-group-item-danger' if game.teams['visitor'].goaler in game.replacements.keys() }}">{{ game.teams['visitor'].goaler }}</li>
           </ul>
         </div>
       </div>
@@ -131,7 +131,7 @@
         <div class="card-body">
           <h5 class="card-title">Gardien</h5>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item">Jo</li>
+            <li class="list-group-item{{ ' list-group-item-danger' if game.teams['local'].goaler in game.replacements.keys() }}">{{ game.teams['local'].goaler }}</li>
 
           </ul>
         </div>
